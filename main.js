@@ -13,6 +13,7 @@ function Book(author, title, pages, year, read, cover) {
 function addBookToLibrary(author, title, pages, year, read, cover) {
     let book = new Book(author, title, pages, year, read, cover)
     myLibrary.push(book);
+    return book;
 }
 
 // initialize document
@@ -27,6 +28,9 @@ function makeBook(Book) {
     book.classList.add('book');
 
 
+    let cover = document.createElement('div');
+    cover.classList.add('cover');
+
     let bookTop = document.createElement('div');
     bookTop.classList.add('book-top');
 
@@ -34,15 +38,22 @@ function makeBook(Book) {
     bookBottom.classList.add('book-bottom');
 
 
+    let pages = document.createElement('p');
+    pages.classList.add('pages');
+
     let title = document.createElement('h3');
     title.classList.add('title');
 
-    let read = document.createElement('button');
-    read.classList.add('read');
-
     let removeBook = document.createElement('button');
     removeBook.classList.add('remove-book');
+    // make button work
+    removeBook.addEventListener('click', () => {
+        book.remove();
+    })
 
+
+    let year = document.createElement('p');
+    year.classList.add('year');
 
     let author = document.createElement('p');
     author.classList.add('author');
@@ -50,38 +61,41 @@ function makeBook(Book) {
     let id = document.createElement('p');
     id.classList.add('id');
 
-    let pages = document.createElement('p');
-    pages.classList.add('pages');
+    let read = document.createElement('button');
+    read.classList.add('read');
 
 
+    book.appendChild(cover);
     book.appendChild(bookTop);
     book.appendChild(bookBottom);
 
+    bookTop.appendChild(pages);
     bookTop.appendChild(title);
-    bookTop.appendChild(read);
     bookTop.appendChild(removeBook);
 
+    bookBottom.appendChild(year);
     bookBottom.appendChild(author);
     bookBottom.appendChild(id);
-    bookBottom.appendChild(pages);
+    bookBottom.appendChild(read);
 
     // assign book values to elements
-    title.textContent = Book.title;
-    if (Book.read) {read.textContent = 'x'};
-    author.textContent = Book.author;
-    id.textContent = crypto.randomUUID();
+    // cover img url
+    let coverImg = document.createElement('img');
+    coverImg.setAttribute('src', Book.cover);
+    cover.appendChild(coverImg);
     pages.textContent = Book.pages;
+    title.textContent = Book.title;
+    removeBook.textContent = 'x';
+    year.textContent = Book.year;
+    author.textContent = Book.author;
+    id.textContent = Book.id;
+    if (Book.read === "on") {read.textContent = "Read"} else {read.textContent = "Unread"};
+
 
     return book;
 }
 
-/* 
-Pseudocode
-if library empty
-    return
-for book in library
-    display book
-*/
+
 function displayBooks(library) {
     if (library.length === 0) {
         return;
@@ -96,18 +110,9 @@ function displayBooks(library) {
 
 function newBook() {
     const modal = document.querySelector('.modal');
-    const form = document.querySelector('form');
-    const formData = new FormData(form);
     const openForm = document.querySelector('.add-book');
     const closeForm = document.querySelector('.close-form');
     const submitForm = document.querySelector('.submit');
-
-    let author = formData.get('author');
-    let title = formData.get('title');
-    let pages = formData.get('pages');
-    let year = formData.get('year');
-    let read = formData.get('read');
-    let cover = formData.get('cover');
 
     openForm.addEventListener('click', () => {
         modal.showModal();
@@ -118,11 +123,21 @@ function newBook() {
     })
 
     submitForm.addEventListener('click', () => {
-        let newBook = new Book(author, title, pages, year, read, cover);
-        addBookToLibrary(newBook);
-        let bookElement = makeBook(newBook);
+        const form = document.querySelector('form');
+        const formData = new FormData(form);
+
+        let author = formData.get('author');
+        let title = formData.get('title');
+        let pages = formData.get('pages');
+        let year = formData.get('year');
+        let read = formData.get('read');
+        let cover = formData.get('cover');
+        
+        let toAdd = addBookToLibrary(author, title, pages, year, read, cover);
+        let bookElement = makeBook(toAdd);
         books.appendChild(bookElement);
     })
 }
 
+displayBooks(myLibrary);
 newBook();
