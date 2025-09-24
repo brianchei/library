@@ -2,12 +2,12 @@ const myLibrary = [];
 
 function Book(author, title, pages, year, read, cover) {
     this.author = author;
-    this.tile = title;
+    this.title = title;
     this.pages = pages;
     this.year = year;
     this.read = read;
     this.cover = cover;
-    this.id = crypto.randomUUID();
+    this.id = (crypto.randomUUID()).slice(1, 15);
 }
 
 function addBookToLibrary(author, title, pages, year, read, cover) {
@@ -59,7 +59,7 @@ function makeBook(Book) {
     author.classList.add('author');
 
     let id = document.createElement('p');
-    id.classList.add('id');
+    id.classList.add('ID');
 
     let read = document.createElement('button');
     read.classList.add('read');
